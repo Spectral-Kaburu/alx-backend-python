@@ -22,3 +22,10 @@ class ExecuteQuery:
         if self.conn:
             self.conn.close()
             print("[INFO] Connection closed.")
+
+query = "SELECT * FROM users WHERE age > ?"
+params = (25,)
+
+with ExecuteQuery('users.db', query, params) as results:
+    for row in results:
+        print(row)

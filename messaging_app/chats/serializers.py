@@ -32,11 +32,18 @@ class MessageSerializer(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
     messages = MessageSerializer(many=True, read_only=True)
+    latest_message = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['conversation_id', 'participants', 'messages', 'created_at']
-        read_only_fields = ['conversation_id', 'created_at']
+        fields = ['conversation_id', 'participants', 'messages', 'latest_message', 'created_at']
+
+    def get_latest_message(self, obj):
+        last_msg = obj.messages.order_by('-sent_at').first()
+        if last_msg:
+            return MessageSerializer(last_msg).data
+        return None
+
 
 class ConversationCreateSerializer(serializers.ModelSerializer):
     participant_ids = serializers.ListField(
@@ -49,9 +56,15 @@ class ConversationCreateSerializer(serializers.ModelSerializer):
         fields = ['conversation_id', 'participant_ids', 'created_at']
         read_only_fields = ['conversation_id', 'created_at']
 
+    def validate_participant_ids(self, value):
+        if len(value) < 2:
+            raise serializers.ValidationError("A conversation must have at least 2 participants.")
+        return value
+
     def create(self, validated_data):
         participant_ids = validated_data.pop('participant_ids')
-        conversation = Conversation.objects.create(**validated_data)
+        conversation = Conversation.objects.create()
         users = CustomUser.objects.filter(user_id__in=participant_ids)
         conversation.participants.set(users)
         return conversation
+

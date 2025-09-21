@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    "rest_framework.permissions.IsAuthenticated",
+    "DEFAULT_AUTHENTICATION_CLASSES",
+    "rest_framework.authentication.SessionAuthentication"
 ]
 
 MIDDLEWARE = [

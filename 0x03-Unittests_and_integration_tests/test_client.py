@@ -6,7 +6,7 @@ actual HTTP calls by mocking get_json.
 """
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 from typing import Dict
 from client import GithubOrgClient
@@ -51,8 +51,8 @@ class TestGithubOrgClient(unittest.TestCase):
         test_payload = {"repos_url": "https://api.github.com/orgs/test/repos"}
         client = GithubOrgClient("test")
 
-        with patch.object(GithubOrgClient, "org", new_callable=property) as mock_org:
-            mock_org.return_value = test_payload
+        with patch.object(GithubOrgClient,"org",new_callable=property) as m_o:
+            m_o.return_value = test_payload
             result = client._public_repos_url
 
         self.assertEqual(result, test_payload["repos_url"])

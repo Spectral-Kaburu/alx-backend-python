@@ -6,9 +6,9 @@ It ensures that nested dictionary access works correctly for given paths.
 
 import unittest
 from parameterized import parameterized
-from typing import Any, Mapping, Sequence, Dict
+from typing import Any, Mapping, Sequence, Dict, Callable
 from unittest.mock import patch, Mock
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -75,6 +75,39 @@ class TestGetJson(unittest.TestCase):
 
             mock_get.assert_called_once_with(test_url)
             self.assertEqual(result, test_payload)
+
+
+class TestMemoize(unittest.TestCase):
+    """
+    TestMemoize defines unit tests for the memoize decorator.
+    It verifies that a decorated method is called only once even if accessed
+    multiple times, and that the cached value is returned afterward.
+    """
+
+    def test_memoize(self) -> None:
+        """
+        Test that a memoized property calls the underlying method only once
+        and returns the correct result for subsequent calls.
+        """
+
+        class TestClass:
+            """Simple test class with a memoized property."""
+
+            def a_method(self) -> int:
+                """Return 42, normally would be expensive to compute."""
+                return 42
+
+            @memoize
+            def a_property(self) -> int:
+                """Memoized property returning result of a_method."""
+                return self.a_method()
+
+        with patch.object(TestClass, "a_method", return_value=42) as mock_method:
+            obj = TestClass()
+            self.assertEqual(obj.a_property, 42)
+            self.assertEqual(obj.a_property, 42)
+            mock_method.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -29,7 +29,8 @@ class TestAccessNestedMap(unittest.TestCase):
         expected: Any
     ) -> None:
         """
-        Test that access_nested_map returns the expected value for given inputs.
+        Test that access_nested_map returns the expected value
+        for given inputs
         """
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
@@ -61,7 +62,7 @@ class TestGetJson(unittest.TestCase):
         ("http://example.com", {"payload": True}),
         ("http://holberton.io", {"payload": False}),
     ])
-    def test_get_json(self, test_url: str, test_payload: Dict[str, Any]) -> None:
+    def test_get_json(self, test_url: str, test_payload: Dict[str, Any]):
         """
         Test that get_json returns the expected JSON payload and that
         requests.get is called exactly once with the correct URL.
@@ -102,11 +103,11 @@ class TestMemoize(unittest.TestCase):
                 """Memoized property returning result of a_method."""
                 return self.a_method()
 
-        with patch.object(TestClass, "a_method", return_value=42) as mock_method:
+        with patch.object(TestClass, "a_method", return_value=42) as mock_m:
             obj = TestClass()
             self.assertEqual(obj.a_property, 42)
             self.assertEqual(obj.a_property, 42)
-            mock_method.assert_called_once()
+            mock_m.assert_called_once()
 
 
 if __name__ == "__main__":

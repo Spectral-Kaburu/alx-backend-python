@@ -8,7 +8,7 @@ actual HTTP calls by mocking get_json.
 import unittest
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized, parameterized_class
-from .fixtures import TEST_PAYLOAD
+from fixtures import TEST_PAYLOAD
 from typing import Dict
 from client import GithubOrgClient
 
@@ -84,8 +84,8 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     def test_has_license(self, repo, license_key, expected):
         """Test GithubOrgClient.has_license with different inputs"""
-        from client import GithubOrgClient  # import inside to match style
-        self.assertEqual(GithubOrgClient.has_license(repo, license_key), expected)
+        from client import GithubOrgClient as goc # import inside to match style
+        self.assertEqual(goc.has_license(repo, license_key), expected)
 
 
 @parameterized_class([
@@ -97,7 +97,6 @@ class TestGithubOrgClient(unittest.TestCase):
     }
     for org, repos, expected, apache2 in TEST_PAYLOAD
 ])
-
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos"""
 
@@ -118,6 +117,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         class MockResponse:
             def __init__(self, payload):
                 self._payload = payload
+
             def json(self):
                 return self._payload
 

@@ -8,7 +8,7 @@ actual HTTP calls by mocking get_json.
 import unittest
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized, parameterized_class
-from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+from .fixtures import TEST_PAYLOAD
 from typing import Dict
 from client import GithubOrgClient
 
@@ -90,12 +90,14 @@ class TestGithubOrgClient(unittest.TestCase):
 
 @parameterized_class([
     {
-        "org_payload": org_payload,
-        "repos_payload": repos_payload,
-        "expected_repos": expected_repos,
-        "apache2_repos": apache2_repos,
+        "org_payload": org,
+        "repos_payload": repos,
+        "expected_repos": expected,
+        "apache2_repos": apache2,
     }
+    for org, repos, expected, apache2 in TEST_PAYLOAD
 ])
+
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos"""
 

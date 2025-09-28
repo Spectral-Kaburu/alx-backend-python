@@ -1,18 +1,19 @@
-from rest_framework import viewsets, permissions, status, filters
+from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-
 from .models import Conversation, Message, CustomUser
 from .serializers import (
     ConversationSerializer,
     ConversationCreateSerializer,
     MessageSerializer,
 )
+from rest_framework.exceptions import PermissionDenied
+from .permissions import IsParticipantOfConversation as ipoc
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, ipoc]
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -28,7 +29,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, ipoc]
 
     def get_queryset(self):
         conversation_id = self.kwargs.get('conversation_pk')

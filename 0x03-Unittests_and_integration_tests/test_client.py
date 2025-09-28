@@ -84,7 +84,7 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     def test_has_license(self, repo, license_key, expected):
         """Test GithubOrgClient.has_license with different inputs"""
-        from client import GithubOrgClient as goc # import inside to match style
+        from client import GithubOrgClient as goc
         self.assertEqual(goc.has_license(repo, license_key), expected)
 
 
